@@ -1,0 +1,79 @@
+---
+title: "Weight Lifting Exercise Prediction"
+author: "kwu"
+date: "Friday, June 19, 2015"
+output: html_document
+---
+
+This analysis attempts to create a model to predict if a person correctly performs a barbell lift based on data from sensors on the person and the dumbbell. The data are sourced from the paper by Velloso, E.; Bulling, A.; Gellersen, H.; Ugulino, W.; Fuks, H. Qualitative Activity Recognition of Weight Lifting Exercises. Proceedings of 4th International Conference in Cooperation with SIGCHI (Augmented Human '13) . Stuttgart, Germany: ACM SIGCHI, 2013.
+
+##Preprocessing
+We begin by removing all columns not associated with sensor data including identifiers, times, and windows. Further we remove all columns with missing values for all observations in the test set from both the test and train set. Lastly we split the data into 60/20/20 Training/Testing/Validation. The data set is fortunately large engouh that we can split it into 3 groups.
+
+```{r}
+require(caret)
+# enabling parallel processing
+library(doParallel);cl <- makeCluster(detectCores());registerDoParallel(cl)
+set.seed(2345)
+assignmentSet <- read.csv("pml-testing.csv")
+data <- read.csv("pml-training.csv")
+# selecting relevant columns
+cols <- c(8:11,37:49,60:68,84:86,102,113:124,140,151:160)
+data <- data[,cols]
+# splitting the data
+inTrain <- createDataPartition(y=data$classe,p=.60,list=FALSE)
+train <- data[inTrain,]
+temp <- data[-inTrain,]
+inTest <- createDataPartition(y=temp$classe,p=.50,list=FALSE)
+test <- temp[inTest,]
+validation <- temp[-inTest,]
+```
+
+##Model training
+We set aside the testing and validation data set and only use the training set. We try two methods: 1) random forests 2) boosting.
+
+```{r, cache=TRUE}
+modelFit1 <- train(classe ~ .,data=train,method="rf",prox=TRUE)
+modelFit2 <- train(classe ~ .,data=train,method="gbm",verbose=FALSE)
+```
+
+##Model evaluation
+We evaluate each model on the test set and select the best performer.
+
+Random Forest Model
+```{r}
+modelFit1Predict <- predict(modelFit1,newdata=test)
+confusionMatrix(modelFit1Predict,test$classe)
+```
+
+Boosting Model
+```{r}
+modelFit2Predict <- predict(modelFit2,newdata=test)
+confusionMatrix(modelFit2Predict,test$classe)
+```
+
+The Random Forest Model has higher accuracy so we select that model.
+
+##Model validation and out of sample error estimate
+We now use our validation set to estimate our out of sample error rate.
+
+```{r}
+modelFit1Valid <- predict(modelFit1,newdata=validation)
+confusionMatrix(modelFit1Valid,test$classe)
+````
+
+95% confidence invterval for out of sample error is (0.0133, 0.0069).
+
+##Predictions
+```{r, eval=FALSE}
+pml_write_files = function(x){
+  n = length(x)
+  for(i in 1:n){
+    filename = paste0("problem_id_",i,".txt")
+    write.table(x[i],file=filename,quote=FALSE,row.names=FALSE,col.names=FALSE)
+  }
+}
+answers <- predict(modelFit1,newdata=assignmentSet
+setwd("./assignment_files")
+pml_write_files(answers)                   
+```
