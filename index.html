@@ -235,7 +235,7 @@ confusionMatrix(modelFit1Valid,test$classe)</code></pre>
     write.table(x[i],file=filename,quote=FALSE,row.names=FALSE,col.names=FALSE)
   }
 }
-answers &lt;- predict(modelFit1,newdata=assignmentSet
+answers &lt;- predict(modelFit1,newdata=assignmentSet)
 setwd(&quot;./assignment_files&quot;)
 pml_write_files(answers)                   </code></pre>
 </div>
