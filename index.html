@@ -70,7 +70,7 @@ img {
 <p>This analysis attempts to create a model to predict if a person correctly performs a barbell lift based on data from sensors on the person and the dumbbell. The data are sourced from the paper by Velloso, E.; Bulling, A.; Gellersen, H.; Ugulino, W.; Fuks, H. Qualitative Activity Recognition of Weight Lifting Exercises. Proceedings of 4th International Conference in Cooperation with SIGCHI (Augmented Human ’13) . Stuttgart, Germany: ACM SIGCHI, 2013.</p>
 <div id="preprocessing" class="section level2">
 <h2>Preprocessing</h2>
-<p>We begin by removing all columns not associated with sensor data including identifiers, times, and windows. Further we remove all columns with missing values for all observations in the test set from both the test and train set. Lastly we split the data into 60/20/20 Training/Testing/Validation. The data set is fortunately large engouh that we can split it into 3 groups.</p>
+<p>We begin by removing all columns not associated with sensor data including identifiers, times, and windows. Further we remove all columns with missing values for all observations in the test set from both the test and train set. Lastly we split the data into 60/20/20 Training/Testing/Validation. The data set is fortunately large enough that we can split it into 3 groups.</p>
 <pre class="r"><code>require(caret)</code></pre>
 <pre><code>## Loading required package: caret
 ## Loading required package: lattice
